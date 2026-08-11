@@ -19,6 +19,7 @@ import Register from "./home/Register";
 import About from "./home/About";
 import Contact from "./home/Contact";
 import Help from "./home/Help";
+import Payment from "./home/Payment";
 
 function App() {
   return (
@@ -59,6 +60,8 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           
           <Route path="/help" element={<Help />} />
+
+          <Route path="/payment" element={<Payment />} />
         </Routes>
       </main>
 

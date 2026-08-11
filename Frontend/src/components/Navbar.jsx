@@ -500,60 +500,6 @@ function Navbar() {
 
                       <div className="border-t border-gray-100 my-2" />
 
-                      {/* ABOUT */}
-
-                      <Link
-                        to="/about"
-                        onClick={() => setAccountOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition"
-                      >
-                        <span className="w-9 h-9 rounded-lg bg-pink-50 flex items-center justify-center">
-                          <FaInfoCircle className="text-pink-600" />
-                        </span>
-
-                        <span className="text-sm font-medium text-gray-700">
-                          About WoolCraft
-                        </span>
-                      </Link>
-
-                      {/* CONTACT */}
-
-                      <Link
-                        to="/contact"
-                        onClick={() => setAccountOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition"
-                      >
-                        <span className="w-9 h-9 rounded-lg bg-pink-50 flex items-center justify-center">
-                          <FaPhone className="text-pink-600" />
-                        </span>
-
-                        <span className="text-sm font-medium text-gray-700">
-                          Contact Us
-                        </span>
-                      </Link>
-
-                      {/* HELP */}
-
-                      <Link
-                        to="/help"
-                        onClick={() => setAccountOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-pink-50 transition"
-                      >
-                        <span className="w-9 h-9 rounded-lg bg-pink-50 flex items-center justify-center">
-                          <FaQuestionCircle className="text-pink-600" />
-                        </span>
-
-                        <div>
-                          <p className="text-sm font-semibold text-gray-700">
-                            Help & Support
-                          </p>
-
-                          <p className="text-xs text-gray-400">
-                            Need help? We're here
-                          </p>
-                        </div>
-                      </Link>
-
                       {/* SETTINGS */}
 
                       <Link
@@ -678,39 +624,6 @@ function Navbar() {
                 >
                   <FaGift className="text-pink-600" />
                   Products
-                </Link>
-
-                {/* ABOUT */}
-
-                <Link
-                  to="/about"
-                  onClick={closeMenus}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-pink-50 text-gray-700"
-                >
-                  <FaInfoCircle className="text-pink-600" />
-                  About
-                </Link>
-
-                {/* CONTACT */}
-
-                <Link
-                  to="/contact"
-                  onClick={closeMenus}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-pink-50 text-gray-700"
-                >
-                  <FaPhone className="text-pink-600" />
-                  Contact
-                </Link>
-
-                {/* HELP */}
-
-                <Link
-                  to="/help"
-                  onClick={closeMenus}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-pink-50 text-gray-700"
-                >
-                  <FaQuestionCircle className="text-pink-600" />
-                  Help & Support
                 </Link>
 
                 {/* WISHLIST */}

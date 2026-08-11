@@ -100,10 +100,7 @@ function Checkout() {
     let savedCart = [];
 
     try {
-      savedCart =
-        JSON.parse(
-          localStorage.getItem(CART_KEY) || "[]",
-        ) || [];
+      savedCart = JSON.parse(localStorage.getItem(CART_KEY) || "[]") || [];
     } catch (error) {
       console.error("Cart loading error:", error);
       savedCart = [];
@@ -152,11 +149,7 @@ function Checkout() {
 
   const subtotal = useMemo(() => {
     return cart.reduce((total, item) => {
-      return (
-        total +
-        Number(item.price || 0) *
-          Number(item.quantity || 1)
-      );
+      return total + Number(item.price || 0) * Number(item.quantity || 1);
     }, 0);
   }, [cart]);
 
@@ -183,10 +176,7 @@ function Checkout() {
       postalCode: formData.postalCode.trim(),
     };
 
-    localStorage.setItem(
-      "woolcraft-user",
-      JSON.stringify(updatedUser),
-    );
+    localStorage.setItem("woolcraft-user", JSON.stringify(updatedUser));
 
     setUser(updatedUser);
 
@@ -208,8 +198,7 @@ function Checkout() {
       return false;
     }
 
-    const emailRegex =
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(formData.email.trim())) {
       toast.error("Please enter a valid email address");
@@ -224,9 +213,7 @@ function Checkout() {
     const cleanPhone = formData.phone.replace(/\D/g, "");
 
     if (cleanPhone.length !== 10) {
-      toast.error(
-        "Please enter a valid 10 digit phone number",
-      );
+      toast.error("Please enter a valid 10 digit phone number");
       return false;
     }
 
@@ -280,6 +267,22 @@ function Checkout() {
       return;
     }
 
+    // ONLINE PAYMENT
+    if (formData.paymentMethod === "online") {
+      navigate("/payment", {
+        state: {
+          cart,
+          user,
+          formData,
+          subtotal,
+          deliveryCharge,
+          total,
+        },
+      });
+
+      return;
+    }
+
     setLoading(true);
 
     // =======================================================
@@ -327,9 +330,7 @@ function Checkout() {
 
     try {
       existingOrders =
-        JSON.parse(
-          localStorage.getItem("woolcraft-orders") || "[]",
-        ) || [];
+        JSON.parse(localStorage.getItem("woolcraft-orders") || "[]") || [];
     } catch (error) {
       console.error("Order loading error:", error);
       existingOrders = [];
@@ -341,10 +342,7 @@ function Checkout() {
 
     localStorage.setItem(
       "woolcraft-orders",
-      JSON.stringify([
-        order,
-        ...existingOrders,
-      ]),
+      JSON.stringify([order, ...existingOrders]),
     );
 
     // =======================================================
@@ -375,9 +373,7 @@ function Checkout() {
     setTimeout(() => {
       setLoading(false);
 
-      toast.success(
-        "Order placed successfully! 🎉",
-      );
+      toast.success("Order placed successfully! 🎉");
 
       navigate("/order-success", {
         state: {
@@ -426,8 +422,8 @@ function Checkout() {
           </h1>
 
           <p className="mt-3 text-gray-500">
-            Add some beautiful handmade wool crafts
-            before proceeding to checkout.
+            Add some beautiful handmade wool crafts before proceeding to
+            checkout.
           </p>
 
           <Link
@@ -449,7 +445,6 @@ function Checkout() {
   return (
     <section className="min-h-screen bg-gray-50 py-8 md:py-12">
       <div className="max-w-7xl mx-auto px-4">
-
         {/* HEADER */}
 
         <motion.div
@@ -471,17 +466,14 @@ function Checkout() {
           </Link>
 
           <div className="mt-5">
-            <p className="text-pink-600 font-semibold">
-              WOOLCRAFT NEPAL
-            </p>
+            <p className="text-pink-600 font-semibold">WOOLCRAFT NEPAL</p>
 
             <h1 className="mt-1 text-3xl md:text-4xl font-bold text-gray-900">
               Checkout
             </h1>
 
             <p className="mt-2 text-gray-500">
-              Complete your delivery details and place
-              your order.
+              Complete your delivery details and place your order.
             </p>
           </div>
         </motion.div>
@@ -492,11 +484,9 @@ function Checkout() {
           onSubmit={handlePlaceOrder}
           className="mt-8 grid lg:grid-cols-[1fr_380px] gap-6 lg:gap-8"
         >
-
           {/* LEFT */}
 
           <div className="space-y-6">
-
             {/* DELIVERY INFORMATION */}
 
             <motion.div
@@ -521,8 +511,7 @@ function Checkout() {
                   </h2>
 
                   <p className="text-sm text-gray-500">
-                    Your saved account information is
-                    already filled in.
+                    Your saved account information is already filled in.
                   </p>
                 </div>
               </div>
@@ -653,10 +642,7 @@ function Checkout() {
               <div className="mt-5">
                 <label className="text-sm font-medium text-gray-700">
                   Order Note
-                  <span className="text-gray-400 font-normal">
-                    {" "}
-                    (Optional)
-                  </span>
+                  <span className="text-gray-400 font-normal"> (Optional)</span>
                 </label>
 
                 <textarea
@@ -703,7 +689,6 @@ function Checkout() {
               </div>
 
               <div className="mt-6 space-y-3">
-
                 {/* COD */}
 
                 <label
@@ -717,9 +702,7 @@ function Checkout() {
                     type="radio"
                     name="paymentMethod"
                     value="cod"
-                    checked={
-                      formData.paymentMethod === "cod"
-                    }
+                    checked={formData.paymentMethod === "cod"}
                     onChange={handleChange}
                     className="accent-pink-600"
                   />
@@ -750,9 +733,7 @@ function Checkout() {
                     type="radio"
                     name="paymentMethod"
                     value="online"
-                    checked={
-                      formData.paymentMethod === "online"
-                    }
+                    checked={formData.paymentMethod === "online"}
                     onChange={handleChange}
                     className="accent-pink-600"
                   />
@@ -765,12 +746,10 @@ function Checkout() {
                     </p>
 
                     <p className="text-sm text-gray-500">
-                      Online payment integration can be
-                      added later.
+                      Pay securely using Visa, MasterCard or Debit Card.
                     </p>
                   </div>
                 </label>
-
               </div>
             </motion.div>
           </div>
@@ -789,19 +768,13 @@ function Checkout() {
             className="lg:sticky lg:top-24 h-fit"
           >
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-6">
-
-              <h2 className="text-xl font-bold text-gray-900">
-                Order Summary
-              </h2>
+              <h2 className="text-xl font-bold text-gray-900">Order Summary</h2>
 
               {/* PRODUCTS */}
 
               <div className="mt-5 space-y-4 max-h-[420px] overflow-y-auto pr-1">
                 {cart.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex gap-3"
-                  >
+                  <div key={item.id} className="flex gap-3">
                     <div className="relative shrink-0">
                       <img
                         src={item.image}
@@ -828,8 +801,7 @@ function Checkout() {
                       <p className="mt-1 text-pink-600 font-semibold text-sm">
                         Rs.{" "}
                         {(
-                          Number(item.price || 0) *
-                          Number(item.quantity || 1)
+                          Number(item.price || 0) * Number(item.quantity || 1)
                         ).toLocaleString()}
                       </p>
                     </div>
@@ -858,26 +830,21 @@ function Checkout() {
                 </span>
 
                 <span className="font-medium text-gray-900">
-                  {deliveryCharge === 0
-                    ? "FREE"
-                    : `Rs. ${deliveryCharge}`}
+                  {deliveryCharge === 0 ? "FREE" : `Rs. ${deliveryCharge}`}
                 </span>
               </div>
 
               {subtotal < 3000 && (
                 <p className="mt-2 text-xs text-gray-500">
-                  Add Rs.{" "}
-                  {(3000 - subtotal).toLocaleString()} more
-                  for free delivery.
+                  Add Rs. {(3000 - subtotal).toLocaleString()} more for free
+                  delivery.
                 </p>
               )}
 
               {/* TOTAL */}
 
               <div className="border-t border-gray-100 my-5 pt-5 flex justify-between items-center">
-                <span className="text-lg font-bold text-gray-900">
-                  Total
-                </span>
+                <span className="text-lg font-bold text-gray-900">Total</span>
 
                 <span className="text-2xl font-bold text-pink-600">
                   Rs. {total.toLocaleString()}
@@ -910,7 +877,6 @@ function Checkout() {
                 <FaCheckCircle className="text-green-500" />
                 Secure & trusted checkout
               </div>
-
             </div>
           </motion.div>
         </form>

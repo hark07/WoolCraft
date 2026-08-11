@@ -134,7 +134,7 @@ function Cart() {
   // DELIVERY
   // =========================================================
 
-  const deliveryCharge = subtotal >= 3000 ? 0 : 150;
+  const deliveryCharge = subtotal >= 0 ? 0 : 0;
 
   // =========================================================
   // TOTAL
@@ -610,16 +610,6 @@ function Cart() {
                     : `Rs. ${deliveryCharge}`}
                 </span>
               </div>
-
-              {subtotal < 3000 && (
-                <div className="mt-3 bg-pink-50 rounded-xl p-3">
-                  <p className="text-xs text-pink-700">
-                    Add Rs.{" "}
-                    {(3000 - subtotal).toLocaleString()} more
-                    to get FREE delivery.
-                  </p>
-                </div>
-              )}
 
               <div className="border-t border-gray-100 my-5" />
 
