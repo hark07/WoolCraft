@@ -19,8 +19,11 @@ function Checkout() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const CART_KEY = "woolcraft-cart";
+
   const [cart, setCart] = useState([]);
   const [user, setUser] = useState(null);
+
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
 
@@ -40,7 +43,7 @@ function Checkout() {
   });
 
   // =========================================================
-  // GET LOGGED-IN USER
+  // GET CURRENT USER
   // =========================================================
 
   const getCurrentUser = () => {
@@ -65,18 +68,6 @@ function Checkout() {
   };
 
   // =========================================================
-  // USER CART KEY
-  // =========================================================
-
-  const getUserCartKey = (currentUser) => {
-    if (!currentUser?.id) {
-      return null;
-    }
-
-    return `woolcraft-cart-user-${currentUser.id}`;
-  };
-
-  // =========================================================
   // LOAD USER + CART
   // =========================================================
 
@@ -92,7 +83,7 @@ function Checkout() {
 
       navigate("/login", {
         state: {
-          from: location.pathname,
+          from: "/checkout",
         },
         replace: true,
       });
@@ -103,17 +94,22 @@ function Checkout() {
     setUser(currentUser);
 
     // -------------------------------------------------------
-    // LOAD USER CART
+    // LOAD SAME CART USED BY CART.JSX
     // -------------------------------------------------------
-
-    const cartKey = getUserCartKey(currentUser);
 
     let savedCart = [];
 
     try {
-      savedCart = JSON.parse(localStorage.getItem(cartKey) || "[]") || [];
+      savedCart =
+        JSON.parse(
+          localStorage.getItem(CART_KEY) || "[]",
+        ) || [];
     } catch (error) {
       console.error("Cart loading error:", error);
+      savedCart = [];
+    }
+
+    if (!Array.isArray(savedCart)) {
       savedCart = [];
     }
 
@@ -135,7 +131,7 @@ function Checkout() {
     });
 
     setPageLoading(false);
-  }, [navigate, location.pathname]);
+  }, [navigate]);
 
   // =========================================================
   // FORM CHANGE
@@ -156,7 +152,11 @@ function Checkout() {
 
   const subtotal = useMemo(() => {
     return cart.reduce((total, item) => {
-      return total + Number(item.price || 0) * Number(item.quantity || 1);
+      return (
+        total +
+        Number(item.price || 0) *
+          Number(item.quantity || 1)
+      );
     }, 0);
   }, [cart]);
 
@@ -183,7 +183,10 @@ function Checkout() {
       postalCode: formData.postalCode.trim(),
     };
 
-    localStorage.setItem("woolcraft-user", JSON.stringify(updatedUser));
+    localStorage.setItem(
+      "woolcraft-user",
+      JSON.stringify(updatedUser),
+    );
 
     setUser(updatedUser);
 
@@ -205,6 +208,14 @@ function Checkout() {
       return false;
     }
 
+    const emailRegex =
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(formData.email.trim())) {
+      toast.error("Please enter a valid email address");
+      return false;
+    }
+
     if (!formData.phone.trim()) {
       toast.error("Please enter your phone number");
       return false;
@@ -213,7 +224,9 @@ function Checkout() {
     const cleanPhone = formData.phone.replace(/\D/g, "");
 
     if (cleanPhone.length !== 10) {
-      toast.error("Please enter a valid 10 digit phone number");
+      toast.error(
+        "Please enter a valid 10 digit phone number",
+      );
       return false;
     }
 
@@ -232,6 +245,11 @@ function Checkout() {
       return false;
     }
 
+    if (!formData.paymentMethod) {
+      toast.error("Please select a payment method");
+      return false;
+    }
+
     return true;
   };
 
@@ -242,9 +260,19 @@ function Checkout() {
   const handlePlaceOrder = (e) => {
     e.preventDefault();
 
+    if (loading) {
+      return;
+    }
+
     if (!user) {
       toast.error("Please login first");
-      navigate("/login");
+
+      navigate("/login", {
+        state: {
+          from: "/checkout",
+        },
+      });
+
       return;
     }
 
@@ -282,15 +310,12 @@ function Checkout() {
       })),
 
       subtotal,
-
       deliveryCharge,
-
       total,
 
       status: "Pending",
 
       createdAt: new Date().toISOString(),
-
       updatedAt: new Date().toISOString(),
     };
 
@@ -302,14 +327,24 @@ function Checkout() {
 
     try {
       existingOrders =
-        JSON.parse(localStorage.getItem("woolcraft-orders") || "[]") || [];
-    } catch {
+        JSON.parse(
+          localStorage.getItem("woolcraft-orders") || "[]",
+        ) || [];
+    } catch (error) {
+      console.error("Order loading error:", error);
+      existingOrders = [];
+    }
+
+    if (!Array.isArray(existingOrders)) {
       existingOrders = [];
     }
 
     localStorage.setItem(
       "woolcraft-orders",
-      JSON.stringify([order, ...existingOrders]),
+      JSON.stringify([
+        order,
+        ...existingOrders,
+      ]),
     );
 
     // =======================================================
@@ -319,27 +354,18 @@ function Checkout() {
     updateUserInformation();
 
     // =======================================================
-    // CLEAR USER CART
+    // CLEAR CART
     // =======================================================
 
-    const cartKey = getUserCartKey(user);
+    localStorage.removeItem(CART_KEY);
 
-    if (cartKey) {
-      localStorage.removeItem(cartKey);
-    }
-
-    // -------------------------------------------------------
-    // ALSO CLEAR OLD GUEST CART
-    // -------------------------------------------------------
-
-    localStorage.removeItem("woolcraft-cart");
+    setCart([]);
 
     // =======================================================
-    // UPDATE NAVBAR
+    // UPDATE NAVBAR / OTHER COMPONENTS
     // =======================================================
 
     window.dispatchEvent(new Event("cartUpdated"));
-
     window.dispatchEvent(new Event("ordersUpdated"));
 
     // =======================================================
@@ -349,7 +375,9 @@ function Checkout() {
     setTimeout(() => {
       setLoading(false);
 
-      toast.success("Order placed successfully! 🎉");
+      toast.success(
+        "Order placed successfully! 🎉",
+      );
 
       navigate("/order-success", {
         state: {
@@ -360,7 +388,7 @@ function Checkout() {
   };
 
   // =========================================================
-  // LOADING
+  // PAGE LOADING
   // =========================================================
 
   if (pageLoading) {
@@ -398,8 +426,8 @@ function Checkout() {
           </h1>
 
           <p className="mt-3 text-gray-500">
-            Add some beautiful handmade wool crafts before proceeding to
-            checkout.
+            Add some beautiful handmade wool crafts
+            before proceeding to checkout.
           </p>
 
           <Link
@@ -421,9 +449,8 @@ function Checkout() {
   return (
     <section className="min-h-screen bg-gray-50 py-8 md:py-12">
       <div className="max-w-7xl mx-auto px-4">
-        {/* =================================================
-            HEADER
-        ================================================= */}
+
+        {/* HEADER */}
 
         <motion.div
           initial={{
@@ -444,34 +471,33 @@ function Checkout() {
           </Link>
 
           <div className="mt-5">
-            <p className="text-pink-600 font-semibold">WOOLCRAFT NEPAL</p>
+            <p className="text-pink-600 font-semibold">
+              WOOLCRAFT NEPAL
+            </p>
 
             <h1 className="mt-1 text-3xl md:text-4xl font-bold text-gray-900">
               Checkout
             </h1>
 
             <p className="mt-2 text-gray-500">
-              Complete your delivery details and place your order.
+              Complete your delivery details and place
+              your order.
             </p>
           </div>
         </motion.div>
 
-        {/* =================================================
-            MAIN
-        ================================================= */}
+        {/* MAIN */}
 
         <form
           onSubmit={handlePlaceOrder}
           className="mt-8 grid lg:grid-cols-[1fr_380px] gap-6 lg:gap-8"
         >
-          {/* =================================================
-              LEFT
-          ================================================= */}
+
+          {/* LEFT */}
 
           <div className="space-y-6">
-            {/* =================================================
-                DELIVERY INFORMATION
-            ================================================= */}
+
+            {/* DELIVERY INFORMATION */}
 
             <motion.div
               initial={{
@@ -495,14 +521,13 @@ function Checkout() {
                   </h2>
 
                   <p className="text-sm text-gray-500">
-                    Your saved account information is already filled in.
+                    Your saved account information is
+                    already filled in.
                   </p>
                 </div>
               </div>
 
-              {/* =================================================
-                  NAME
-              ================================================= */}
+              {/* NAME */}
 
               <div className="mt-6">
                 <label className="text-sm font-medium text-gray-700">
@@ -518,14 +543,13 @@ function Checkout() {
                     value={formData.name}
                     onChange={handleChange}
                     placeholder="Enter your full name"
+                    autoComplete="name"
                     className="w-full border border-gray-200 rounded-xl py-3.5 pl-11 pr-4 outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-100"
                   />
                 </div>
               </div>
 
-              {/* =================================================
-                  EMAIL
-              ================================================= */}
+              {/* EMAIL */}
 
               <div className="mt-5">
                 <label className="text-sm font-medium text-gray-700">
@@ -541,14 +565,13 @@ function Checkout() {
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="you@example.com"
+                    autoComplete="email"
                     className="w-full border border-gray-200 rounded-xl py-3.5 pl-11 pr-4 outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-100"
                   />
                 </div>
               </div>
 
-              {/* =================================================
-                  PHONE
-              ================================================= */}
+              {/* PHONE */}
 
               <div className="mt-5">
                 <label className="text-sm font-medium text-gray-700">
@@ -565,14 +588,13 @@ function Checkout() {
                     onChange={handleChange}
                     placeholder="98XXXXXXXX"
                     maxLength={10}
+                    autoComplete="tel"
                     className="w-full border border-gray-200 rounded-xl py-3.5 pl-11 pr-4 outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-100"
                   />
                 </div>
               </div>
 
-              {/* =================================================
-                  ADDRESS
-              ================================================= */}
+              {/* ADDRESS */}
 
               <div className="mt-5">
                 <label className="text-sm font-medium text-gray-700">
@@ -583,15 +605,14 @@ function Checkout() {
                   name="address"
                   value={formData.address}
                   onChange={handleChange}
-                  rows="3"
+                  rows={3}
                   placeholder="House no, street, area..."
+                  autoComplete="street-address"
                   className="mt-2 w-full border border-gray-200 rounded-xl p-4 outline-none resize-none focus:border-pink-500 focus:ring-2 focus:ring-pink-100"
                 />
               </div>
 
-              {/* =================================================
-                  CITY + POSTAL
-              ================================================= */}
+              {/* CITY + POSTAL */}
 
               <div className="grid sm:grid-cols-2 gap-4 mt-5">
                 <div>
@@ -605,6 +626,7 @@ function Checkout() {
                     value={formData.city}
                     onChange={handleChange}
                     placeholder="Kathmandu"
+                    autoComplete="address-level2"
                     className="mt-2 w-full border border-gray-200 rounded-xl py-3.5 px-4 outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-100"
                   />
                 </div>
@@ -620,35 +642,35 @@ function Checkout() {
                     value={formData.postalCode}
                     onChange={handleChange}
                     placeholder="44600"
+                    autoComplete="postal-code"
                     className="mt-2 w-full border border-gray-200 rounded-xl py-3.5 px-4 outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-100"
                   />
                 </div>
               </div>
 
-              {/* =================================================
-                  NOTE
-              ================================================= */}
+              {/* NOTE */}
 
               <div className="mt-5">
                 <label className="text-sm font-medium text-gray-700">
                   Order Note
-                  <span className="text-gray-400 font-normal"> (Optional)</span>
+                  <span className="text-gray-400 font-normal">
+                    {" "}
+                    (Optional)
+                  </span>
                 </label>
 
                 <textarea
                   name="note"
                   value={formData.note}
                   onChange={handleChange}
-                  rows="3"
+                  rows={3}
                   placeholder="Any special delivery instructions?"
                   className="mt-2 w-full border border-gray-200 rounded-xl p-4 outline-none resize-none focus:border-pink-500 focus:ring-2 focus:ring-pink-100"
                 />
               </div>
             </motion.div>
 
-            {/* =================================================
-                PAYMENT
-            ================================================= */}
+            {/* PAYMENT */}
 
             <motion.div
               initial={{
@@ -681,9 +703,8 @@ function Checkout() {
               </div>
 
               <div className="mt-6 space-y-3">
-                {/* =================================================
-                    COD
-                ================================================= */}
+
+                {/* COD */}
 
                 <label
                   className={`flex items-center gap-4 border rounded-xl p-4 cursor-pointer transition ${
@@ -696,7 +717,9 @@ function Checkout() {
                     type="radio"
                     name="paymentMethod"
                     value="cod"
-                    checked={formData.paymentMethod === "cod"}
+                    checked={
+                      formData.paymentMethod === "cod"
+                    }
                     onChange={handleChange}
                     className="accent-pink-600"
                   />
@@ -714,9 +737,7 @@ function Checkout() {
                   </div>
                 </label>
 
-                {/* =================================================
-                    ONLINE
-                ================================================= */}
+                {/* ONLINE */}
 
                 <label
                   className={`flex items-center gap-4 border rounded-xl p-4 cursor-pointer transition ${
@@ -729,7 +750,9 @@ function Checkout() {
                     type="radio"
                     name="paymentMethod"
                     value="online"
-                    checked={formData.paymentMethod === "online"}
+                    checked={
+                      formData.paymentMethod === "online"
+                    }
                     onChange={handleChange}
                     className="accent-pink-600"
                   />
@@ -742,17 +765,17 @@ function Checkout() {
                     </p>
 
                     <p className="text-sm text-gray-500">
-                      Online payment integration can be added later.
+                      Online payment integration can be
+                      added later.
                     </p>
                   </div>
                 </label>
+
               </div>
             </motion.div>
           </div>
 
-          {/* =================================================
-              RIGHT - ORDER SUMMARY
-          ================================================= */}
+          {/* RIGHT - ORDER SUMMARY */}
 
           <motion.div
             initial={{
@@ -766,15 +789,19 @@ function Checkout() {
             className="lg:sticky lg:top-24 h-fit"
           >
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-6">
-              <h2 className="text-xl font-bold text-gray-900">Order Summary</h2>
 
-              {/* =================================================
-                  PRODUCTS
-              ================================================= */}
+              <h2 className="text-xl font-bold text-gray-900">
+                Order Summary
+              </h2>
+
+              {/* PRODUCTS */}
 
               <div className="mt-5 space-y-4 max-h-[420px] overflow-y-auto pr-1">
                 {cart.map((item) => (
-                  <div key={item.id} className="flex gap-3">
+                  <div
+                    key={item.id}
+                    className="flex gap-3"
+                  >
                     <div className="relative shrink-0">
                       <img
                         src={item.image}
@@ -783,7 +810,7 @@ function Checkout() {
                       />
 
                       <span className="absolute -top-2 -right-2 bg-pink-600 text-white text-[10px] min-w-5 h-5 rounded-full flex items-center justify-center px-1">
-                        {item.quantity}
+                        {Number(item.quantity || 1)}
                       </span>
                     </div>
 
@@ -801,7 +828,8 @@ function Checkout() {
                       <p className="mt-1 text-pink-600 font-semibold text-sm">
                         Rs.{" "}
                         {(
-                          Number(item.price || 0) * Number(item.quantity || 1)
+                          Number(item.price || 0) *
+                          Number(item.quantity || 1)
                         ).toLocaleString()}
                       </p>
                     </div>
@@ -809,15 +837,9 @@ function Checkout() {
                 ))}
               </div>
 
-              {/* =================================================
-                  DIVIDER
-              ================================================= */}
-
               <div className="border-t border-gray-100 my-5" />
 
-              {/* =================================================
-                  SUBTOTAL
-              ================================================= */}
+              {/* SUBTOTAL */}
 
               <div className="flex justify-between text-gray-600">
                 <span>Subtotal</span>
@@ -827,9 +849,7 @@ function Checkout() {
                 </span>
               </div>
 
-              {/* =================================================
-                  DELIVERY
-              ================================================= */}
+              {/* DELIVERY */}
 
               <div className="flex justify-between mt-3 text-gray-600">
                 <span className="flex items-center gap-2">
@@ -838,36 +858,33 @@ function Checkout() {
                 </span>
 
                 <span className="font-medium text-gray-900">
-                  {deliveryCharge === 0 ? "FREE" : `Rs. ${deliveryCharge}`}
+                  {deliveryCharge === 0
+                    ? "FREE"
+                    : `Rs. ${deliveryCharge}`}
                 </span>
               </div>
 
-              {/* =================================================
-                  FREE DELIVERY MESSAGE
-              ================================================= */}
-
               {subtotal < 3000 && (
                 <p className="mt-2 text-xs text-gray-500">
-                  Add Rs. {(3000 - subtotal).toLocaleString()} more for free
-                  delivery.
+                  Add Rs.{" "}
+                  {(3000 - subtotal).toLocaleString()} more
+                  for free delivery.
                 </p>
               )}
 
-              {/* =================================================
-                  TOTAL
-              ================================================= */}
+              {/* TOTAL */}
 
               <div className="border-t border-gray-100 my-5 pt-5 flex justify-between items-center">
-                <span className="text-lg font-bold text-gray-900">Total</span>
+                <span className="text-lg font-bold text-gray-900">
+                  Total
+                </span>
 
                 <span className="text-2xl font-bold text-pink-600">
                   Rs. {total.toLocaleString()}
                 </span>
               </div>
 
-              {/* =================================================
-                  PLACE ORDER
-              ================================================= */}
+              {/* PLACE ORDER */}
 
               <button
                 type="submit"
@@ -887,14 +904,13 @@ function Checkout() {
                 )}
               </button>
 
-              {/* =================================================
-                  SECURITY
-              ================================================= */}
+              {/* SECURITY */}
 
               <div className="mt-4 flex items-center justify-center gap-2 text-xs text-gray-500">
                 <FaCheckCircle className="text-green-500" />
                 Secure & trusted checkout
               </div>
+
             </div>
           </motion.div>
         </form>

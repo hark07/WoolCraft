@@ -21,42 +21,68 @@ function Cart() {
   const [cart, setCart] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // ==========================================
-  // CHECK LOGIN
-  // ==========================================
+  // =========================================================
+  // CART STORAGE KEY
+  // =========================================================
+
+  const CART_KEY = "woolcraft-cart";
+
+  // =========================================================
+  // CHECK AUTH
+  // =========================================================
 
   const checkAuth = () => {
-    const auth = JSON.parse(localStorage.getItem("woolcraft-auth"));
-    const user = JSON.parse(localStorage.getItem("woolcraft-user"));
+    try {
+      const auth = JSON.parse(
+        localStorage.getItem("woolcraft-auth") || "false",
+      );
 
-    setIsLoggedIn(Boolean(auth && user));
+      const user = JSON.parse(
+        localStorage.getItem("woolcraft-user") || "null",
+      );
+
+      setIsLoggedIn(Boolean(auth && user));
+    } catch (error) {
+      console.error("Authentication loading error:", error);
+      setIsLoggedIn(false);
+    }
   };
 
-  // ==========================================
+  // =========================================================
   // LOAD CART
-  // ==========================================
+  // =========================================================
 
   const loadCart = () => {
-    const savedCart = JSON.parse(localStorage.getItem("woolcraft-cart")) || [];
+    try {
+      const savedCart =
+        JSON.parse(localStorage.getItem(CART_KEY) || "[]") || [];
 
-    setCart(Array.isArray(savedCart) ? savedCart : []);
+      setCart(Array.isArray(savedCart) ? savedCart : []);
+    } catch (error) {
+      console.error("Cart loading error:", error);
+      setCart([]);
+    }
   };
 
-  // ==========================================
+  // =========================================================
   // SAVE CART
-  // ==========================================
+  // =========================================================
 
   const saveCart = (updatedCart) => {
-    localStorage.setItem("woolcraft-cart", JSON.stringify(updatedCart));
+    try {
+      localStorage.setItem(CART_KEY, JSON.stringify(updatedCart));
+      setCart(updatedCart);
 
-    setCart(updatedCart);
-
-    window.dispatchEvent(new Event("cartUpdated"));
+      window.dispatchEvent(new Event("cartUpdated"));
+    } catch (error) {
+      console.error("Cart saving error:", error);
+      toast.error("Unable to update cart");
+    }
   };
 
-  // ==========================================
+  // =========================================================
   // INITIAL LOAD
-  // ==========================================
+  // =========================================================
 
   useEffect(() => {
     checkAuth();
@@ -80,81 +106,45 @@ function Cart() {
     };
   }, []);
 
-  // ==========================================
-  // IMPORTANT:
-  // GUEST CART CLEAR AFTER PAGE REFRESH
-  // ==========================================
-  //
-  // We use sessionStorage to know whether this
-  // browser tab/session has already initialized.
-  //
-  // If user is NOT logged in:
-  // first visit -> keep cart
-  // refresh/reload -> clear cart
-  //
-  // Logged-in user:
-  // cart remains saved in localStorage.
-  // ==========================================
-
-  useEffect(() => {
-    const auth = JSON.parse(localStorage.getItem("woolcraft-auth"));
-    const user = JSON.parse(localStorage.getItem("woolcraft-user"));
-
-    const loggedIn = Boolean(auth && user);
-
-    if (loggedIn) {
-      sessionStorage.setItem("woolcraft-cart-session", "active");
-      return;
-    }
-
-    const cartSession = sessionStorage.getItem("woolcraft-cart-session");
-
-    if (cartSession === "active") {
-      localStorage.removeItem("woolcraft-cart");
-
-      setCart([]);
-
-      window.dispatchEvent(new Event("cartUpdated"));
-    } else {
-      sessionStorage.setItem("woolcraft-cart-session", "active");
-    }
-  }, []);
-
-  // ==========================================
+  // =========================================================
   // TOTAL QUANTITY
-  // ==========================================
+  // =========================================================
 
   const totalQuantity = useMemo(() => {
-    return cart.reduce((total, item) => total + Number(item.quantity || 1), 0);
-  }, [cart]);
-
-  // ==========================================
-  // SUBTOTAL
-  // ==========================================
-
-  const subtotal = useMemo(() => {
     return cart.reduce(
-      (total, item) =>
-        total + Number(item.price || 0) * Number(item.quantity || 1),
+      (total, item) => total + Number(item.quantity || 1),
       0,
     );
   }, [cart]);
 
-  // ==========================================
+  // =========================================================
+  // SUBTOTAL
+  // =========================================================
+
+  const subtotal = useMemo(() => {
+    return cart.reduce((total, item) => {
+      return (
+        total +
+        Number(item.price || 0) * Number(item.quantity || 1)
+      );
+    }, 0);
+  }, [cart]);
+
+  // =========================================================
   // DELIVERY
-  // ==========================================
+  // =========================================================
 
   const deliveryCharge = subtotal >= 3000 ? 0 : 150;
 
-  // ==========================================
+  // =========================================================
   // TOTAL
-  // ==========================================
+  // =========================================================
 
   const total = subtotal + deliveryCharge;
 
-  // ==========================================
+  // =========================================================
   // INCREASE QUANTITY
-  // ==========================================
+  // =========================================================
 
   const increaseQuantity = (id) => {
     const updatedCart = cart.map((item) => {
@@ -171,9 +161,9 @@ function Cart() {
     saveCart(updatedCart);
   };
 
-  // ==========================================
+  // =========================================================
   // DECREASE QUANTITY
-  // ==========================================
+  // =========================================================
 
   const decreaseQuantity = (id) => {
     const updatedCart = cart.map((item) => {
@@ -192,26 +182,30 @@ function Cart() {
     saveCart(updatedCart);
   };
 
-  // ==========================================
+  // =========================================================
   // REMOVE ITEM
-  // ==========================================
+  // =========================================================
 
   const removeItem = (id) => {
     const item = cart.find((product) => product.id === id);
 
-    const updatedCart = cart.filter((product) => product.id !== id);
+    const updatedCart = cart.filter(
+      (product) => product.id !== id,
+    );
 
     saveCart(updatedCart);
 
-    toast.success(`${item?.name || "Product"} removed from cart`);
+    toast.success(
+      `${item?.name || "Product"} removed from cart`,
+    );
   };
 
-  // ==========================================
+  // =========================================================
   // CLEAR CART
-  // ==========================================
+  // =========================================================
 
   const clearCart = () => {
-    localStorage.removeItem("woolcraft-cart");
+    localStorage.removeItem(CART_KEY);
 
     setCart([]);
 
@@ -220,15 +214,25 @@ function Cart() {
     toast.success("Cart cleared");
   };
 
-  // ==========================================
+  // =========================================================
   // MOVE TO WISHLIST
-  // ==========================================
+  // =========================================================
 
   const moveToWishlist = (item) => {
-    const wishlist =
-      JSON.parse(localStorage.getItem("woolcraft-wishlist")) || [];
+    let wishlist = [];
 
-    const alreadyExists = wishlist.some((product) => product.id === item.id);
+    try {
+      wishlist =
+        JSON.parse(
+          localStorage.getItem("woolcraft-wishlist") || "[]",
+        ) || [];
+    } catch {
+      wishlist = [];
+    }
+
+    const alreadyExists = wishlist.some(
+      (product) => product.id === item.id,
+    );
 
     if (!alreadyExists) {
       const updatedWishlist = [...wishlist, item];
@@ -248,9 +252,9 @@ function Cart() {
     removeItem(item.id);
   };
 
-  // ==========================================
+  // =========================================================
   // CHECKOUT
-  // ==========================================
+  // =========================================================
 
   const handleCheckout = () => {
     if (cart.length === 0) {
@@ -258,7 +262,6 @@ function Cart() {
       return;
     }
 
-    // Guest user must login/register before checkout
     if (!isLoggedIn) {
       toast("Please login or register before checkout");
 
@@ -274,9 +277,9 @@ function Cart() {
     navigate("/checkout");
   };
 
-  // ==========================================
-  // EMPTY CART UI
-  // ==========================================
+  // =========================================================
+  // EMPTY CART
+  // =========================================================
 
   if (cart.length === 0) {
     return (
@@ -324,16 +327,15 @@ function Cart() {
     );
   }
 
-  // ==========================================
+  // =========================================================
   // MAIN UI
-  // ==========================================
+  // =========================================================
 
   return (
     <section className="min-h-screen bg-gray-50 py-8 md:py-12">
       <div className="max-w-7xl mx-auto px-4">
-        {/* ======================================
-            HEADER
-        ====================================== */}
+
+        {/* HEADER */}
 
         <motion.div
           initial={{
@@ -355,15 +357,17 @@ function Cart() {
 
           <div className="mt-5 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div>
-              <p className="text-pink-600 font-semibold">WOOLCRAFT NEPAL</p>
+              <p className="text-pink-600 font-semibold">
+                WOOLCRAFT NEPAL
+              </p>
 
               <h1 className="mt-1 text-3xl md:text-4xl font-bold text-gray-900">
                 Shopping Cart
               </h1>
 
               <p className="mt-2 text-gray-500">
-                {totalQuantity} {totalQuantity === 1 ? "item" : "items"} in your
-                cart
+                {totalQuantity}{" "}
+                {totalQuantity === 1 ? "item" : "items"} in your cart
               </p>
             </div>
 
@@ -377,9 +381,7 @@ function Cart() {
           </div>
         </motion.div>
 
-        {/* ======================================
-            GUEST NOTICE
-        ====================================== */}
+        {/* GUEST NOTICE */}
 
         {!isLoggedIn && (
           <motion.div
@@ -405,7 +407,8 @@ function Cart() {
                   </p>
 
                   <p className="text-sm text-gray-500 mt-1">
-                    Create an account so your cart stays saved when you return.
+                    Create an account so your cart stays saved
+                    when you return.
                   </p>
                 </div>
               </div>
@@ -421,20 +424,18 @@ function Cart() {
           </motion.div>
         )}
 
-        {/* ======================================
-            MAIN GRID
-        ====================================== */}
+        {/* MAIN GRID */}
 
         <div className="mt-8 grid lg:grid-cols-[1fr_380px] gap-6 lg:gap-8">
-          {/* ====================================
-              CART ITEMS
-          ==================================== */}
+
+          {/* CART ITEMS */}
 
           <div className="space-y-4">
             {cart.map((item, index) => {
               const quantity = Number(item.quantity || 1);
 
-              const itemTotal = Number(item.price || 0) * quantity;
+              const itemTotal =
+                Number(item.price || 0) * quantity;
 
               return (
                 <motion.div
@@ -453,9 +454,13 @@ function Cart() {
                   className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 md:p-5"
                 >
                   <div className="flex gap-4">
-                    {/* PRODUCT IMAGE */}
 
-                    <Link to={`/products/${item.id}`} className="shrink-0">
+                    {/* IMAGE */}
+
+                    <Link
+                      to={`/products/${item.id}`}
+                      className="shrink-0"
+                    >
                       <img
                         src={item.image}
                         alt={item.name}
@@ -463,10 +468,11 @@ function Cart() {
                       />
                     </Link>
 
-                    {/* PRODUCT INFO */}
+                    {/* INFO */}
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-3">
+
                         <div className="min-w-0">
                           <Link
                             to={`/products/${item.id}`}
@@ -482,7 +488,10 @@ function Cart() {
                           )}
 
                           <p className="mt-2 text-pink-600 font-bold">
-                            Rs. {Number(item.price || 0).toLocaleString()}
+                            Rs.{" "}
+                            {Number(
+                              item.price || 0,
+                            ).toLocaleString()}
                           </p>
                         </div>
 
@@ -500,6 +509,7 @@ function Cart() {
                       {/* BOTTOM */}
 
                       <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+
                         {/* WISHLIST */}
 
                         <button
@@ -511,11 +521,14 @@ function Cart() {
                         </button>
 
                         <div className="flex items-center justify-between sm:justify-end gap-5">
+
                           {/* QUANTITY */}
 
                           <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden">
                             <button
-                              onClick={() => decreaseQuantity(item.id)}
+                              onClick={() =>
+                                decreaseQuantity(item.id)
+                              }
                               disabled={quantity <= 1}
                               className="w-9 h-9 flex items-center justify-center text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
                               aria-label="Decrease quantity"
@@ -528,7 +541,9 @@ function Cart() {
                             </span>
 
                             <button
-                              onClick={() => increaseQuantity(item.id)}
+                              onClick={() =>
+                                increaseQuantity(item.id)
+                              }
                               className="w-9 h-9 flex items-center justify-center text-gray-600 hover:bg-gray-50"
                               aria-label="Increase quantity"
                             >
@@ -539,7 +554,9 @@ function Cart() {
                           {/* ITEM TOTAL */}
 
                           <div className="text-right min-w-[90px]">
-                            <p className="text-xs text-gray-400">Total</p>
+                            <p className="text-xs text-gray-400">
+                              Total
+                            </p>
 
                             <p className="font-bold text-gray-900">
                               Rs. {itemTotal.toLocaleString()}
@@ -554,9 +571,7 @@ function Cart() {
             })}
           </div>
 
-          {/* ====================================
-              ORDER SUMMARY
-          ==================================== */}
+          {/* ORDER SUMMARY */}
 
           <motion.div
             initial={{
@@ -570,9 +585,10 @@ function Cart() {
             className="lg:sticky lg:top-24 h-fit"
           >
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-6">
-              <h2 className="text-xl font-bold text-gray-900">Order Summary</h2>
 
-              {/* ITEM COUNT */}
+              <h2 className="text-xl font-bold text-gray-900">
+                Order Summary
+              </h2>
 
               <div className="mt-5 flex justify-between text-gray-600">
                 <span>Items ({totalQuantity})</span>
@@ -582,8 +598,6 @@ function Cart() {
                 </span>
               </div>
 
-              {/* DELIVERY */}
-
               <div className="mt-3 flex justify-between text-gray-600">
                 <span className="flex items-center gap-2">
                   <FaTruck className="text-pink-600" />
@@ -591,47 +605,44 @@ function Cart() {
                 </span>
 
                 <span className="font-medium text-gray-900">
-                  {deliveryCharge === 0 ? "FREE" : `Rs. ${deliveryCharge}`}
+                  {deliveryCharge === 0
+                    ? "FREE"
+                    : `Rs. ${deliveryCharge}`}
                 </span>
               </div>
-
-              {/* FREE DELIVERY MESSAGE */}
 
               {subtotal < 3000 && (
                 <div className="mt-3 bg-pink-50 rounded-xl p-3">
                   <p className="text-xs text-pink-700">
-                    Add Rs. {(3000 - subtotal).toLocaleString()} more to get
-                    FREE delivery.
+                    Add Rs.{" "}
+                    {(3000 - subtotal).toLocaleString()} more
+                    to get FREE delivery.
                   </p>
                 </div>
               )}
 
-              {/* DIVIDER */}
-
               <div className="border-t border-gray-100 my-5" />
 
-              {/* TOTAL */}
-
               <div className="flex items-center justify-between">
-                <span className="text-lg font-bold text-gray-900">Total</span>
+                <span className="text-lg font-bold text-gray-900">
+                  Total
+                </span>
 
                 <span className="text-2xl font-bold text-pink-600">
                   Rs. {total.toLocaleString()}
                 </span>
               </div>
 
-              {/* CHECKOUT */}
-
               <button
                 onClick={handleCheckout}
                 className="w-full mt-6 bg-pink-600 hover:bg-pink-700 text-white py-3.5 rounded-xl font-semibold flex items-center justify-center gap-2 transition"
               >
-                {isLoggedIn ? "Proceed to Checkout" : "Login to Checkout"}
+                {isLoggedIn
+                  ? "Proceed to Checkout"
+                  : "Login to Checkout"}
 
                 <FaArrowRight />
               </button>
-
-              {/* LOGIN INFO */}
 
               {!isLoggedIn && (
                 <p className="mt-3 text-center text-xs text-gray-500">
@@ -639,9 +650,8 @@ function Cart() {
                 </p>
               )}
 
-              {/* TRUST */}
-
               <div className="mt-5 pt-5 border-t border-gray-100 space-y-3">
+
                 <div className="flex items-center gap-3 text-sm text-gray-500">
                   <FaShieldAlt className="text-green-500" />
                   Secure checkout
@@ -656,6 +666,7 @@ function Cart() {
                   <FaShoppingBag className="text-pink-500" />
                   Handmade WoolCraft products
                 </div>
+
               </div>
             </div>
           </motion.div>
