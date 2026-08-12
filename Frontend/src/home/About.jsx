@@ -329,6 +329,150 @@ function About() {
         </div>
       </section>
 
+      {/* HANDMADE PROCESS */}
+      <section className="py-16 md:py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center max-w-3xl mx-auto">
+            <p className="text-pink-600 font-bold text-sm uppercase tracking-widest">
+              Handmade Process
+            </p>
+
+            <h2 className="mt-3 text-3xl md:text-4xl font-bold text-gray-900">
+              How We Create Every WoolCraft Product
+            </h2>
+
+            <p className="mt-4 text-gray-500 leading-7">
+              Every item goes through a careful handmade process from design to
+              final finishing.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-4 gap-6 mt-12">
+            <div className="bg-white rounded-3xl p-6 text-center shadow-sm">
+              <div className="w-14 h-14 mx-auto rounded-full bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-xl">
+                1
+              </div>
+
+              <h3 className="mt-4 font-bold text-gray-900">Design</h3>
+
+              <p className="mt-2 text-sm text-gray-500">
+                We create beautiful handmade concepts and designs.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-3xl p-6 text-center shadow-sm">
+              <div className="w-14 h-14 mx-auto rounded-full bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-xl">
+                2
+              </div>
+
+              <h3 className="mt-4 font-bold text-gray-900">
+                Material Selection
+              </h3>
+
+              <p className="mt-2 text-sm text-gray-500">
+                Quality wool and materials are carefully selected.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-3xl p-6 text-center shadow-sm">
+              <div className="w-14 h-14 mx-auto rounded-full bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-xl">
+                3
+              </div>
+
+              <h3 className="mt-4 font-bold text-gray-900">
+                Handmade Crafting
+              </h3>
+
+              <p className="mt-2 text-sm text-gray-500">
+                Every item is handcrafted with care and creativity.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-3xl p-6 text-center shadow-sm">
+              <div className="w-14 h-14 mx-auto rounded-full bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-xl">
+                4
+              </div>
+
+              <h3 className="mt-4 font-bold text-gray-900">
+                Final Quality Check
+              </h3>
+
+              <p className="mt-2 text-sm text-gray-500">
+                Products are checked before delivery.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* OUR TEAM */}
+      <section className="py-16 md:py-20">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center max-w-3xl mx-auto">
+            <p className="text-pink-600 font-bold text-sm uppercase tracking-widest">
+              Our Team
+            </p>
+
+            <h2 className="mt-3 text-3xl md:text-4xl font-bold text-gray-900">
+              The People Behind WoolCraft
+            </h2>
+
+            <p className="mt-4 text-gray-500 leading-7">
+              A passionate team dedicated to creating beautiful handmade wool
+              products.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 mt-12">
+            <div className="bg-white border border-gray-100 rounded-3xl p-8 text-center shadow-sm">
+              <div className="w-24 h-24 mx-auto rounded-full bg-pink-100 flex items-center justify-center text-pink-600 text-3xl font-bold">
+                W
+              </div>
+
+              <h3 className="mt-5 text-xl font-bold text-gray-900">Founder</h3>
+
+              <p className="text-pink-600 font-medium">WoolCraft Nepal</p>
+
+              <p className="mt-3 text-gray-500 text-sm leading-6">
+                Leading creativity, quality and customer experience.
+              </p>
+            </div>
+
+            <div className="bg-white border border-gray-100 rounded-3xl p-8 text-center shadow-sm">
+              <div className="w-24 h-24 mx-auto rounded-full bg-pink-100 flex items-center justify-center text-pink-600 text-3xl font-bold">
+                C
+              </div>
+
+              <h3 className="mt-5 text-xl font-bold text-gray-900">
+                Craft Team
+              </h3>
+
+              <p className="text-pink-600 font-medium">Handmade Experts</p>
+
+              <p className="mt-3 text-gray-500 text-sm leading-6">
+                Creating handcrafted wool flowers, gifts and bouquets.
+              </p>
+            </div>
+
+            <div className="bg-white border border-gray-100 rounded-3xl p-8 text-center shadow-sm">
+              <div className="w-24 h-24 mx-auto rounded-full bg-pink-100 flex items-center justify-center text-pink-600 text-3xl font-bold">
+                S
+              </div>
+
+              <h3 className="mt-5 text-xl font-bold text-gray-900">
+                Support Team
+              </h3>
+
+              <p className="text-pink-600 font-medium">Customer Care</p>
+
+              <p className="mt-3 text-gray-500 text-sm leading-6">
+                Helping customers with orders, delivery and support.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* =====================================================
           SHOP CTA
       ===================================================== */}

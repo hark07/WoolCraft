@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
   FaEnvelope,
@@ -8,9 +7,6 @@ import {
   FaClock,
   FaPaperPlane,
   FaWhatsapp,
-  FaArrowLeft,
-  FaQuestionCircle,
-  FaShoppingBag,
 } from "react-icons/fa";
 
 function Contact() {
@@ -23,6 +19,11 @@ function Contact() {
   });
 
   const [loading, setLoading] = useState(false);
+  const [ticketNumber, setTicketNumber] = useState("");
+
+  const now = new Date();
+  const currentHour = now.getHours();
+  const isOpen = currentHour >= 10 && currentHour < 18;
 
   const handleChange = (e) => {
     setForm({
@@ -51,10 +52,12 @@ function Contact() {
 
     setLoading(true);
 
-    // Demo submit
-    // Replace this section with your backend/API later.
+    const ticket = "WC-" + Math.floor(100000 + Math.random() * 900000);
+
+    setTicketNumber(ticket);
+
     setTimeout(() => {
-      toast.success("Message sent successfully! 🎉");
+      toast.success(`Message sent successfully! Ticket #${ticket}`);
 
       setForm({
         name: "",
@@ -70,9 +73,7 @@ function Contact() {
 
   return (
     <main className="min-h-screen bg-white">
-      {/* =====================================================
-          HERO
-      ===================================================== */}
+      {/* HERO */}
       <section className="bg-gradient-to-br from-pink-50 via-white to-pink-100">
         <div className="max-w-7xl mx-auto px-4 py-14 md:py-20">
           <div className="max-w-3xl mx-auto text-center">
@@ -87,21 +88,17 @@ function Contact() {
 
             <p className="mt-5 text-gray-600 text-base md:text-lg leading-8">
               Have a question about our products, orders, delivery, or anything
-              else? We would love to hear from you.
+              else? We'd love to hear from you.
             </p>
           </div>
         </div>
       </section>
 
-      {/* =====================================================
-          CONTACT CONTENT
-      ===================================================== */}
+      {/* CONTACT SECTION */}
       <section className="py-12 md:py-20">
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid lg:grid-cols-3 gap-8">
-            {/* =================================================
-                CONTACT INFORMATION
-            ================================================= */}
+            {/* CONTACT INFO */}
             <div className="lg:col-span-1">
               <div className="bg-gray-50 rounded-3xl p-6 md:p-8 border border-gray-100">
                 <h2 className="text-2xl font-bold text-gray-900">
@@ -115,7 +112,7 @@ function Contact() {
 
                 {/* EMAIL */}
                 <div className="mt-8 flex gap-4">
-                  <div className="w-12 h-12 shrink-0 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center">
                     <FaEnvelope />
                   </div>
 
@@ -124,7 +121,7 @@ function Contact() {
 
                     <a
                       href="mailto:hello@woolcraftnepal.com"
-                      className="mt-1 block text-sm font-semibold text-gray-800 hover:text-pink-600 break-all"
+                      className="mt-1 block text-sm font-semibold text-gray-800 hover:text-pink-600"
                     >
                       hello@woolcraftnepal.com
                     </a>
@@ -133,7 +130,7 @@ function Contact() {
 
                 {/* PHONE */}
                 <div className="mt-6 flex gap-4">
-                  <div className="w-12 h-12 shrink-0 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center">
                     <FaPhone />
                   </div>
 
@@ -141,51 +138,59 @@ function Contact() {
                     <p className="text-sm text-gray-400">Phone</p>
 
                     <a
-                      href="tel:+9779800000000"
+                      href="tel:+9779862460586"
                       className="mt-1 block text-sm font-semibold text-gray-800 hover:text-pink-600"
                     >
-                      +977 9800000000
+                      +977 9862460586
                     </a>
                   </div>
                 </div>
 
-                {/* LOCATION */}
+                {/* ADDRESS */}
                 <div className="mt-6 flex gap-4">
-                  <div className="w-12 h-12 shrink-0 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center">
                     <FaMapMarkerAlt />
                   </div>
 
                   <div>
-                    <p className="text-sm text-gray-400">Location</p>
+                    <p className="text-sm text-gray-400">Business Address</p>
 
                     <p className="mt-1 text-sm font-semibold text-gray-800">
+                      WoolCraft
+                    </p>
+
+                    <p className="text-xs text-gray-500 mt-1">
                       Kathmandu, Nepal
                     </p>
                   </div>
                 </div>
 
-                {/* HOURS */}
+                {/* BUSINESS HOURS */}
                 <div className="mt-6 flex gap-4">
-                  <div className="w-12 h-12 shrink-0 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center">
                     <FaClock />
                   </div>
 
                   <div>
-                    <p className="text-sm text-gray-400">Support Hours</p>
+                    <p className="text-sm text-gray-400">Business Hours</p>
 
-                    <p className="mt-1 text-sm font-semibold text-gray-800">
-                      Sun - Fri
+                    <p
+                      className={`mt-1 text-sm font-bold ${
+                        isOpen ? "text-green-600" : "text-red-500"
+                      }`}
+                    >
+                      {isOpen ? "Open Now" : "Closed Now"}
                     </p>
 
                     <p className="text-xs text-gray-500 mt-1">
-                      10:00 AM - 6:00 PM
+                      Sun - Fri | 10:00 AM - 6:00 PM
                     </p>
                   </div>
                 </div>
 
                 {/* WHATSAPP */}
                 <a
-                  href="https://wa.me/9779800000000"
+                  href="https://wa.me/9779862460586"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-8 w-full bg-green-500 hover:bg-green-600 text-white rounded-xl py-3.5 font-semibold flex items-center justify-center gap-2 transition"
@@ -193,12 +198,23 @@ function Contact() {
                   <FaWhatsapp className="text-xl" />
                   Chat on WhatsApp
                 </a>
+
+                {/* GOOGLE MAP */}
+                <div className="mt-8 overflow-hidden rounded-2xl border border-gray-200">
+                  <iframe
+                    title="WoolCraft Nepal"
+                    src="https://maps.google.com/maps?q=Kathmandu,Nepal&t=&z=13&ie=UTF8&iwloc=&output=embed"
+                    width="100%"
+                    height="250"
+                    style={{ border: 0 }}
+                    loading="lazy"
+                    allowFullScreen
+                  />
+                </div>
               </div>
             </div>
 
-            {/* =================================================
-                CONTACT FORM
-            ================================================= */}
+            {/* CONTACT FORM */}
             <div className="lg:col-span-2">
               <div className="bg-white rounded-3xl border border-gray-100 shadow-xl p-6 md:p-8">
                 <div>
@@ -219,10 +235,10 @@ function Contact() {
                 <form onSubmit={handleSubmit} className="mt-8 space-y-5">
                   {/* NAME + EMAIL */}
                   <div className="grid md:grid-cols-2 gap-5">
-                    {/* NAME */}
                     <div>
                       <label className="text-sm font-medium text-gray-700">
-                        Full Name <span className="text-red-500">*</span>
+                        Full Name
+                        <span className="text-red-500"> *</span>
                       </label>
 
                       <input
@@ -230,15 +246,15 @@ function Contact() {
                         name="name"
                         value={form.name}
                         onChange={handleChange}
-                        placeholder="Enter your name"
+                        placeholder="Enter your full name"
                         className="mt-2 w-full border border-gray-200 rounded-xl px-4 py-3.5 outline-none focus:border-pink-500 focus:ring-2 focus:ring-pink-100 transition"
                       />
                     </div>
 
-                    {/* EMAIL */}
                     <div>
                       <label className="text-sm font-medium text-gray-700">
-                        Email Address <span className="text-red-500">*</span>
+                        Email Address
+                        <span className="text-red-500"> *</span>
                       </label>
 
                       <input
@@ -254,7 +270,6 @@ function Contact() {
 
                   {/* PHONE + SUBJECT */}
                   <div className="grid md:grid-cols-2 gap-5">
-                    {/* PHONE */}
                     <div>
                       <label className="text-sm font-medium text-gray-700">
                         Phone Number
@@ -270,10 +285,10 @@ function Contact() {
                       />
                     </div>
 
-                    {/* SUBJECT */}
                     <div>
                       <label className="text-sm font-medium text-gray-700">
-                        Subject <span className="text-red-500">*</span>
+                        Subject
+                        <span className="text-red-500"> *</span>
                       </label>
 
                       <input
@@ -290,7 +305,8 @@ function Contact() {
                   {/* MESSAGE */}
                   <div>
                     <label className="text-sm font-medium text-gray-700">
-                      Message <span className="text-red-500">*</span>
+                      Message
+                      <span className="text-red-500"> *</span>
                     </label>
 
                     <textarea
@@ -303,7 +319,7 @@ function Contact() {
                     />
                   </div>
 
-                  {/* SUBMIT */}
+                  {/* SUBMIT BUTTON */}
                   <button
                     type="submit"
                     disabled={loading}
@@ -321,78 +337,27 @@ function Contact() {
                       </>
                     )}
                   </button>
+
+                  {/* TICKET NUMBER */}
+                  {ticketNumber && (
+                    <div className="rounded-xl border border-green-200 bg-green-50 p-4">
+                      <h4 className="font-bold text-green-700">
+                        Support Ticket Generated
+                      </h4>
+
+                      <p className="mt-2 text-green-600 font-medium">
+                        Ticket Number: {ticketNumber}
+                      </p>
+
+                      <p className="mt-1 text-sm text-gray-600">
+                        Please save this ticket number for future communication
+                        with our support team.
+                      </p>
+                    </div>
+                  )}
                 </form>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =====================================================
-          HELP SECTION
-      ===================================================== */}
-      <section className="pb-16 md:pb-20">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="bg-gradient-to-br from-pink-50 to-white border border-pink-100 rounded-3xl p-7 md:p-10">
-            <div className="text-center max-w-2xl mx-auto">
-              <div className="mx-auto w-14 h-14 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center">
-                <FaQuestionCircle className="text-2xl" />
-              </div>
-
-              <h2 className="mt-5 text-2xl md:text-3xl font-bold text-gray-900">
-                Need Help With Your Order?
-              </h2>
-
-              <p className="mt-3 text-gray-500 leading-7">
-                If you have questions about products, delivery, payment,
-                returns, or your order, our support team is ready to help.
-              </p>
-
-              <div className="mt-7 flex flex-wrap justify-center gap-3">
-                <Link
-                  to="/orders"
-                  className="inline-flex items-center gap-2 bg-white border border-gray-200 hover:border-pink-300 text-gray-700 hover:text-pink-600 px-5 py-3 rounded-xl font-semibold transition"
-                >
-                  <FaShoppingBag />
-                  My Orders
-                </Link>
-
-                <a
-                  href="mailto:hello@woolcraftnepal.com"
-                  className="inline-flex items-center gap-2 bg-pink-600 hover:bg-pink-700 text-white px-5 py-3 rounded-xl font-semibold transition"
-                >
-                  <FaEnvelope />
-                  Email Support
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =====================================================
-          BOTTOM CTA
-      ===================================================== */}
-      <section className="bg-pink-600">
-        <div className="max-w-7xl mx-auto px-4 py-12 md:py-16">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="text-center md:text-left">
-              <h2 className="text-2xl md:text-3xl font-bold text-white">
-                Looking for something special?
-              </h2>
-
-              <p className="mt-2 text-pink-100">
-                Explore our handmade wool collection.
-              </p>
-            </div>
-
-            <Link
-              to="/products"
-              className="inline-flex items-center gap-2 bg-white text-pink-600 hover:bg-pink-50 px-6 py-3.5 rounded-xl font-bold transition"
-            >
-              Browse Products
-              <FaArrowLeft className="rotate-180" />
-            </Link>
           </div>
         </div>
       </section>

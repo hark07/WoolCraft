@@ -7,7 +7,6 @@ import {
   FaCreditCard,
   FaUndo,
   FaUser,
-  FaHeart,
   FaShoppingCart,
   FaEnvelope,
   FaPhone,
@@ -16,49 +15,82 @@ import {
   FaArrowRight,
   FaHeadset,
   FaMapMarkerAlt,
+  FaWhatsapp,
+  FaTicketAlt,
 } from "react-icons/fa";
 
 function Help() {
   const [openFaq, setOpenFaq] = useState(null);
 
+  const [ticketForm, setTicketForm] = useState({
+    name: "",
+    email: "",
+    issue: "",
+  });
+
+  const [ticketNumber, setTicketNumber] = useState("");
+
   const toggleFaq = (index) => {
     setOpenFaq(openFaq === index ? null : index);
+  };
+
+  const handleTicketSubmit = (e) => {
+    e.preventDefault();
+
+    if (
+      !ticketForm.name.trim() ||
+      !ticketForm.email.trim() ||
+      !ticketForm.issue.trim()
+    ) {
+      alert("Please fill all fields.");
+      return;
+    }
+
+    const ticket = "WC-" + Math.floor(100000 + Math.random() * 900000);
+
+    setTicketNumber(ticket);
+
+    setTicketForm({
+      name: "",
+      email: "",
+      issue: "",
+    });
   };
 
   const helpCategories = [
     {
       icon: <FaShoppingBag />,
-      title: "Orders",
-      description: "Check your orders and order status.",
+      title: "Order Help",
+      description: "Track, manage and get support for your orders.",
       link: "/orders",
     },
     {
       icon: <FaTruck />,
-      title: "Delivery",
-      description: "Learn about delivery and shipping.",
-      link: "/contact",
+      title: "Delivery Help",
+      description: "Shipping and delivery related information.",
+      link: "/shipping-policy",
     },
     {
       icon: <FaCreditCard />,
-      title: "Payment",
-      description: "Get help with payment questions.",
+      title: "Payment Help",
+      description: "Payment methods and transaction support.",
       link: "/contact",
     },
     {
       icon: <FaUndo />,
-      title: "Returns",
-      description: "Questions about returns and refunds.",
-      link: "/contact",
+      title: "Return & Refund",
+      description: "Learn about return and refund policies.",
+      link: "/return-refund-policy",
     },
     {
       icon: <FaUser />,
-      title: "Account",
+      title: "Account Help",
       description: "Manage your WoolCraft account.",
       link: "/login",
     },
     {
       icon: <FaShoppingCart />,
-      title: "Cart",
+      title: "Cart Help",
       description: "Get help with your shopping cart.",
       link: "/cart",
     },
@@ -68,50 +100,45 @@ function Help() {
     {
       question: "How can I place an order?",
       answer:
-        "Browse our products, select the product you want, choose the quantity, and add it to your cart. Then open your cart and continue to checkout to complete your order.",
-    },
-    {
-      question: "Do I need an account to shop?",
-      answer:
-        "You can browse products without an account. However, creating an account helps you save your cart, manage orders, and access your account information more easily.",
-    },
-    {
-      question: "How can I check my order?",
-      answer:
-        "After logging into your WoolCraft account, open My Orders from the account menu. You can use this section to view your available order information.",
+        "Browse products, add items to your cart, proceed to checkout and complete payment.",
     },
     {
       question: "How long does delivery take?",
       answer:
-        "Delivery time can vary depending on your location and the product. For the latest delivery information, please contact our support team before or after placing your order.",
+        "Delivery usually takes 2–7 business days within Nepal depending on location.",
     },
     {
       question: "What payment methods are available?",
       answer:
-        "Available payment options may depend on your checkout setup. If you have questions about a specific payment method, please contact WoolCraft support.",
+        "Available payment methods depend on your checkout configuration.",
     },
     {
       question: "Can I cancel my order?",
-      answer:
-        "Order cancellation depends on the current order status. Please contact our support team as soon as possible if you need to cancel or change an order.",
+      answer: "Orders can be cancelled before production or shipping starts.",
     },
     {
       question: "Can I return a product?",
-      answer:
-        "Return eligibility can depend on the product and its condition. Please contact support with your order details so we can guide you through the available options.",
+      answer: "Return eligibility depends on product condition and order type.",
     },
     {
-      question: "How can I contact WoolCraft?",
+      question: "Do you accept custom orders?",
+      answer: "Yes. We create customized wool flowers, bouquets and gifts.",
+    },
+    {
+      question: "How do I contact support?",
       answer:
-        "You can contact us through the Contact page. You can send us a message using the contact form or use the available email and phone support options.",
+        "You can contact us through email, phone, WhatsApp or the contact page.",
+    },
+    {
+      question: "Can I track my order?",
+      answer:
+        "Yes. You can view available order information from your account.",
     },
   ];
 
   return (
     <main className="min-h-screen bg-white">
-      {/* =====================================================
-          HERO
-      ===================================================== */}
+      {/* HERO */}
       <section className="bg-gradient-to-br from-pink-50 via-white to-pink-100">
         <div className="max-w-7xl mx-auto px-4 py-14 md:py-20">
           <div className="max-w-3xl mx-auto text-center">
@@ -128,16 +155,14 @@ function Help() {
             </h1>
 
             <p className="mt-5 text-gray-600 text-base md:text-lg leading-8">
-              Find answers to common questions about your account, orders,
-              delivery, payment, cart, wishlist, and more.
+              Find answers to common questions about orders, payment, delivery,
+              returns, refunds and support.
             </p>
           </div>
         </div>
       </section>
 
-      {/* =====================================================
-          QUICK HELP
-      ===================================================== */}
+      {/* QUICK HELP */}
       <section className="py-12 md:py-16">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center">
@@ -149,33 +174,31 @@ function Help() {
               What do you need help with?
             </h2>
 
-            <p className="mt-3 text-gray-500">
-              Choose a topic to quickly find the information you need.
-            </p>
+            <p className="mt-3 text-gray-500">Choose a topic below.</p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mt-10">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-5 mt-10">
             {helpCategories.map((category, index) => (
               <Link
                 key={index}
                 to={category.link}
-                className="group bg-white border border-gray-100 rounded-2xl md:rounded-3xl p-5 md:p-7 shadow-sm hover:shadow-lg hover:border-pink-100 hover:-translate-y-1 transition"
+                className="group bg-white border border-gray-100 rounded-3xl p-6 shadow-sm hover:shadow-lg hover:border-pink-100 hover:-translate-y-1 transition"
               >
-                <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center text-xl md:text-2xl group-hover:bg-pink-600 group-hover:text-white transition">
+                <div className="w-14 h-14 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center text-2xl group-hover:bg-pink-600 group-hover:text-white transition">
                   {category.icon}
                 </div>
 
-                <h3 className="mt-5 text-base md:text-xl font-bold text-gray-900">
+                <h3 className="mt-5 text-lg font-bold text-gray-900">
                   {category.title}
                 </h3>
 
-                <p className="mt-2 text-xs md:text-sm text-gray-500 leading-6">
+                <p className="mt-2 text-sm text-gray-500 leading-6">
                   {category.description}
                 </p>
 
                 <div className="mt-4 text-pink-600 text-sm font-semibold flex items-center gap-2">
-                  Learn more
-                  <FaArrowRight className="text-xs group-hover:translate-x-1 transition" />
+                  Learn More
+                  <FaArrowRight className="text-xs" />
                 </div>
               </Link>
             ))}
@@ -183,10 +206,8 @@ function Help() {
         </div>
       </section>
 
-      {/* =====================================================
-          FAQ
-      ===================================================== */}
-      <section className="py-14 md:py-20 bg-gray-50">
+      {/* FAQ */}
+      <section className="py-16 bg-gray-50">
         <div className="max-w-4xl mx-auto px-4">
           <div className="text-center">
             <div className="mx-auto w-14 h-14 rounded-2xl bg-pink-100 text-pink-600 flex items-center justify-center">
@@ -198,7 +219,7 @@ function Help() {
             </h2>
 
             <p className="mt-3 text-gray-500">
-              Here are answers to some common WoolCraft questions.
+              Find quick answers to common questions.
             </p>
           </div>
 
@@ -209,38 +230,27 @@ function Help() {
               return (
                 <div
                   key={index}
-                  className={`bg-white rounded-2xl border transition ${
+                  className={`bg-white rounded-2xl border ${
                     isOpen ? "border-pink-200 shadow-sm" : "border-gray-100"
                   }`}
                 >
                   <button
                     type="button"
                     onClick={() => toggleFaq(index)}
-                    className="w-full px-5 md:px-6 py-5 flex items-center justify-between gap-4 text-left"
-                    aria-expanded={isOpen}
+                    className="w-full px-6 py-5 flex justify-between items-center text-left"
                   >
-                    <div className="flex items-start gap-3">
-                      <span className="mt-0.5 text-pink-600">
-                        <FaQuestionCircle />
-                      </span>
+                    <span className="font-semibold text-gray-800">
+                      {faq.question}
+                    </span>
 
-                      <span className="font-semibold text-gray-800">
-                        {faq.question}
-                      </span>
-                    </div>
-
-                    <span className="shrink-0 text-gray-400">
+                    <span className="text-gray-400">
                       {isOpen ? <FaChevronUp /> : <FaChevronDown />}
                     </span>
                   </button>
 
                   {isOpen && (
-                    <div className="px-5 md:px-6 pb-5">
-                      <div className="ml-7 border-l-2 border-pink-100 pl-4">
-                        <p className="text-sm md:text-base text-gray-500 leading-7">
-                          {faq.answer}
-                        </p>
-                      </div>
+                    <div className="px-6 pb-5">
+                      <p className="text-gray-500 leading-7">{faq.answer}</p>
                     </div>
                   )}
                 </div>
@@ -250,172 +260,128 @@ function Help() {
         </div>
       </section>
 
-      {/* =====================================================
-          ACCOUNT HELP
-      ===================================================== */}
-      <section className="py-14 md:py-20">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* ACCOUNT */}
-            <div className="rounded-3xl bg-pink-50 border border-pink-100 p-7 md:p-9">
-              <div className="w-14 h-14 rounded-2xl bg-white text-pink-600 flex items-center justify-center shadow-sm">
-                <FaUser className="text-2xl" />
-              </div>
+      {/* CONTACT SUPPORT */}
+      <section className="py-16">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+              Contact Support
+            </h2>
 
-              <h3 className="mt-6 text-2xl font-bold text-gray-900">
-                Account Help
-              </h3>
-
-              <p className="mt-3 text-gray-500 leading-7">
-                Need to login, register, or manage your WoolCraft account? Start
-                here.
-              </p>
-
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Link
-                  to="/login"
-                  className="inline-flex items-center gap-2 bg-pink-600 hover:bg-pink-700 text-white px-5 py-3 rounded-xl font-semibold transition"
-                >
-                  Login / Register
-                  <FaArrowRight />
-                </Link>
-
-                <Link
-                  to="/settings"
-                  className="inline-flex items-center gap-2 bg-white border border-gray-200 hover:border-pink-300 text-gray-700 hover:text-pink-600 px-5 py-3 rounded-xl font-semibold transition"
-                >
-                  Settings
-                </Link>
-              </div>
-            </div>
-
-            {/* ORDER */}
-            <div className="rounded-3xl bg-gray-50 border border-gray-100 p-7 md:p-9">
-              <div className="w-14 h-14 rounded-2xl bg-white text-pink-600 flex items-center justify-center shadow-sm">
-                <FaShoppingBag className="text-2xl" />
-              </div>
-
-              <h3 className="mt-6 text-2xl font-bold text-gray-900">
-                Order Help
-              </h3>
-
-              <p className="mt-3 text-gray-500 leading-7">
-                Check your orders or contact us if you have questions about
-                delivery, cancellation, returns, or your order status.
-              </p>
-
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Link
-                  to="/orders"
-                  className="inline-flex items-center gap-2 bg-pink-600 hover:bg-pink-700 text-white px-5 py-3 rounded-xl font-semibold transition"
-                >
-                  My Orders
-                  <FaArrowRight />
-                </Link>
-
-                <Link
-                  to="/contact"
-                  className="inline-flex items-center gap-2 bg-white border border-gray-200 hover:border-pink-300 text-gray-700 hover:text-pink-600 px-5 py-3 rounded-xl font-semibold transition"
-                >
-                  Contact Support
-                </Link>
-              </div>
-            </div>
+            <p className="mt-3 text-gray-500">
+              Need additional help? Reach our support team.
+            </p>
           </div>
-        </div>
-      </section>
 
-      {/* =====================================================
-          CONTACT SUPPORT
-      ===================================================== */}
-      <section className="pb-14 md:pb-20">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="rounded-[2rem] bg-gradient-to-br from-pink-600 to-pink-500 p-8 md:p-12 text-white">
-            <div className="grid md:grid-cols-2 gap-10 items-center">
-              {/* LEFT */}
-              <div>
-                <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center">
-                  <FaHeadset className="text-2xl" />
-                </div>
+          <div className="grid md:grid-cols-2 gap-8 mt-10">
+            {/* SUPPORT INFO */}
+            <div className="bg-white border border-gray-100 rounded-3xl p-7 shadow-sm">
+              <h3 className="text-xl font-bold text-gray-900">
+                Support Channels
+              </h3>
 
-                <h2 className="mt-6 text-3xl md:text-4xl font-bold">
-                  Still need help?
-                </h2>
-
-                <p className="mt-4 text-pink-100 leading-7 max-w-xl">
-                  Can't find the answer you're looking for? Our support team is
-                  happy to help you with your WoolCraft questions.
-                </p>
-
-                <Link
-                  to="/contact"
-                  className="mt-7 inline-flex items-center gap-2 bg-white text-pink-600 hover:bg-pink-50 px-6 py-3.5 rounded-xl font-bold transition"
-                >
-                  Contact Us
-                  <FaArrowRight />
-                </Link>
-              </div>
-
-              {/* RIGHT */}
-              <div className="grid sm:grid-cols-2 gap-4">
+              <div className="mt-6 space-y-5">
                 <a
                   href="mailto:hello@woolcraftnepal.com"
-                  className="bg-white/10 hover:bg-white/20 border border-white/10 rounded-2xl p-5 transition"
+                  className="flex items-center gap-3 text-gray-700 hover:text-pink-600"
                 >
-                  <FaEnvelope className="text-2xl" />
-
-                  <p className="mt-4 text-sm text-pink-100">Email Support</p>
-
-                  <p className="mt-1 font-semibold break-all">
-                    hello@woolcraftnepal.com
-                  </p>
+                  <FaEnvelope />
+                  hello@woolcraftnepal.com
                 </a>
 
                 <a
-                  href="tel:+9779800000000"
-                  className="bg-white/10 hover:bg-white/20 border border-white/10 rounded-2xl p-5 transition"
+                  href="tel:+9779862460586"
+                  className="flex items-center gap-3 text-gray-700 hover:text-pink-600"
                 >
-                  <FaPhone className="text-2xl" />
-
-                  <p className="mt-4 text-sm text-pink-100">Call Us</p>
-
-                  <p className="mt-1 font-semibold">+977 9800000000</p>
+                  <FaPhone />
+                  +977 9862460586
                 </a>
 
-                <div className="sm:col-span-2 bg-white/10 border border-white/10 rounded-2xl p-5">
-                  <div className="flex items-center gap-3">
-                    <FaMapMarkerAlt className="text-xl" />
+                <a
+                  href="https://wa.me/9779862460586"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 text-green-600 font-semibold"
+                >
+                  <FaWhatsapp />
+                  WhatsApp Support
+                </a>
 
-                    <div>
-                      <p className="text-sm text-pink-100">Location</p>
-
-                      <p className="font-semibold">Kathmandu, Nepal</p>
-                    </div>
-                  </div>
+                <div className="flex items-center gap-3 text-gray-700">
+                  <FaMapMarkerAlt />
+                  Kathmandu, Nepal
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* =====================================================
-          BOTTOM
-      ===================================================== */}
-      <section className="bg-gray-50 border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 py-10">
-          <div className="text-center">
-            <p className="text-gray-500 text-sm">
-              Need more information about WoolCraft products?
-            </p>
+            {/* TICKET SYSTEM */}
+            <div className="bg-white border border-gray-100 rounded-3xl p-7 shadow-sm">
+              <h3 className="text-xl font-bold text-gray-900">
+                Complaint / Ticket System
+              </h3>
 
-            <Link
-              to="/products"
-              className="mt-3 inline-flex items-center gap-2 text-pink-600 font-bold hover:text-pink-700"
-            >
-              Explore Products
-              <FaArrowRight />
-            </Link>
+              <form onSubmit={handleTicketSubmit} className="mt-6 space-y-4">
+                <input
+                  type="text"
+                  placeholder="Your Name"
+                  value={ticketForm.name}
+                  onChange={(e) =>
+                    setTicketForm({
+                      ...ticketForm,
+                      name: e.target.value,
+                    })
+                  }
+                  className="w-full border rounded-xl px-4 py-3"
+                />
+
+                <input
+                  type="email"
+                  placeholder="Email Address"
+                  value={ticketForm.email}
+                  onChange={(e) =>
+                    setTicketForm({
+                      ...ticketForm,
+                      email: e.target.value,
+                    })
+                  }
+                  className="w-full border rounded-xl px-4 py-3"
+                />
+
+                <textarea
+                  rows="5"
+                  placeholder="Describe your issue"
+                  value={ticketForm.issue}
+                  onChange={(e) =>
+                    setTicketForm({
+                      ...ticketForm,
+                      issue: e.target.value,
+                    })
+                  }
+                  className="w-full border rounded-xl px-4 py-3"
+                />
+
+                <button
+                  type="submit"
+                  className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-xl font-semibold transition"
+                >
+                  Submit Ticket
+                </button>
+              </form>
+
+              {ticketNumber && (
+                <div className="mt-5 bg-green-50 border border-green-200 rounded-xl p-4">
+                  <div className="flex items-center gap-2 font-bold text-green-700">
+                    <FaTicketAlt />
+                    Ticket Generated
+                  </div>
+
+                  <p className="mt-2 text-green-700">
+                    Ticket Number:
+                    <span className="font-bold ml-2">{ticketNumber}</span>
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </section>

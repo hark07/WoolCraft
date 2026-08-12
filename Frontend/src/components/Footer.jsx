@@ -8,7 +8,6 @@ import {
   FaPhoneAlt,
   FaEnvelope,
   FaMapMarkerAlt,
-  FaArrowRight,
 } from "react-icons/fa";
 
 function Footer() {
@@ -24,35 +23,43 @@ function Footer() {
             </h2>
 
             <p className="mt-4 text-gray-400 leading-relaxed">
-              Handmade wool flowers, dolls, bouquets and customized gifts
-              crafted with love and creativity.
+              Handmade wool flowers, dolls, bouquets, gift hampers, and
+              customized gifts crafted with love and creativity.
             </p>
 
             {/* Social Links */}
             <div className="flex gap-3 mt-6">
               <a
-                href="#"
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-gray-800 hover:bg-pink-600 flex items-center justify-center transition"
               >
                 <FaFacebookF />
               </a>
 
               <a
-                href="#"
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-gray-800 hover:bg-pink-600 flex items-center justify-center transition"
               >
                 <FaInstagram />
               </a>
 
               <a
-                href="#"
+                href="https://tiktok.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-gray-800 hover:bg-pink-600 flex items-center justify-center transition"
               >
                 <FaTiktok />
               </a>
 
               <a
-                href="#"
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-gray-800 hover:bg-pink-600 flex items-center justify-center transition"
               >
                 <FaYoutube />
@@ -138,18 +145,45 @@ function Footer() {
 
         {/* Bottom Footer */}
         <div className="mt-12 border-t border-gray-800 pt-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-gray-500 text-sm">
+          <div className="flex flex-col lg:flex-row justify-between items-center gap-4 text-gray-500 text-sm">
             <p>
               © {new Date().getFullYear()} WoolCraft Nepal. All Rights Reserved.
             </p>
 
-            <div className="flex gap-5">
-              <Link to="/privacy-policy" className="hover:text-pink-500">
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link
+                to="/privacy-policy"
+                className="hover:text-pink-500 transition"
+              >
                 Privacy Policy
               </Link>
 
-              <Link to="/terms" className="hover:text-pink-500">
+              <Link
+                to="/terms-and-conditions"
+                className="hover:text-pink-500 transition"
+              >
                 Terms & Conditions
+              </Link>
+
+              <Link
+                to="/return-refund-policy"
+                className="hover:text-pink-500 transition"
+              >
+                Return & Refund Policy
+              </Link>
+
+              <Link
+                to="/shipping-policy"
+                className="hover:text-pink-500 transition"
+              >
+                Shipping Policy
+              </Link>
+
+              <Link
+                to="/cancellation-policy"
+                className="hover:text-pink-500 transition"
+              >
+                Cancellation Policy
               </Link>
             </div>
           </div>

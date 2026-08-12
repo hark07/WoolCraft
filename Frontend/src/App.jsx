@@ -20,6 +20,12 @@ import About from "./home/About";
 import Contact from "./home/Contact";
 import Help from "./home/Help";
 import Payment from "./home/Payment";
+import PrivacyPolicy from "./home/policy/PrivacyPolicy";
+import TermsAndConditions from "./home/policy/TermsAndConditions";
+import ReturnRefundPolicy from "./home/policy/ReturnRefundPolicy";
+import ShippingPolicy from "./home/policy/ShippingPolicy";
+import CancellationPolicy from "./home/policy/CancellationPolicy";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
@@ -27,6 +33,7 @@ function App() {
       <Navbar />
 
       <main className="min-h-screen">
+        <ScrollToTop />
         <Routes>
           {/* Home */}
           <Route path="/" element={<Home />} />
@@ -56,12 +63,25 @@ function App() {
           <Route path="/account" element={<Account />} />
 
           <Route path="/about" element={<About />} />
-          
+
           <Route path="/contact" element={<Contact />} />
-          
+
           <Route path="/help" element={<Help />} />
 
           <Route path="/payment" element={<Payment />} />
+
+          {/* Policy */}
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route
+            path="/terms-and-conditions"
+            element={<TermsAndConditions />}
+          />
+          <Route
+            path="/return-refund-policy"
+            element={<ReturnRefundPolicy />}
+          />
+          <Route path="/shipping-policy" element={<ShippingPolicy />} />
+          <Route path="/cancellation-policy" element={<CancellationPolicy />} />
         </Routes>
       </main>
 
